@@ -9,8 +9,6 @@ A Python application that allows you to search for YouTube videos using the YouT
 - 🎤 **Voice/audio prompt support** for hands-free navigation
 - 📝 AI-powered video content summarization
 - 🎯 Smart notes generation from video transcripts
-- ⌨️ Command-line interface for automation
-- 🎨 Styled output with formatted video information
 - 🔄 Continuous search capability
 
 ## Installation
