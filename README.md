@@ -4,42 +4,28 @@ A Python application that allows you to search for YouTube videos using the YouT
 
 ## Features
 
-- 🔍 Search YouTube videos by keywords
-- 🎯 **Jump to specific video parts using natural language prompts**
-- 🎤 **Voice/audio prompt support** for hands-free navigation
-- 📝 AI-powered video content summarization
-- 🎯 Smart notes generation from video transcripts
-- 🔄 Continuous search capability
-
+- Search YouTube videos by keywords
+- Asynchronous processing using celery without disrupting or blocking the UI
+- Redis is used to store the cache temporarily and then next time, it gives instant reply
+- **Jump to specific video parts using natural language prompts**
+- **Voice/audio prompt support** for hands-free navigation
+- AI-powered video content summarization and downloading it as PDF
+  
 ## Installation
 
 1. **Clone or download this repository**
-2. **Install required dependencies:**
+2. Install FFMPEG and Redis
+3. **Install required dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Configure your YouTube API key:**
+4. **Configure your YouTube API key:**
    - Get a YouTube Data API v3 key from [Google Cloud Console](https://console.cloud.google.com/)
    - Edit `Backend/config.py` and replace `YOUR_YOUTUBE_API_KEY_HERE` with your actual API key
    - Enable the YouTube Data API v3 in your Google Cloud project
+   - also make sure google cloud speech to text API is working fine
 
-## Usage
-
-### Command-Line Interface
-
-Run the application:
-```bash
-python Backend/main.py
-```
-
-**Features:**
-- Simple text-based interface
-- Continuous search loop
-- Type 'quit' to exit
-- Compact video information display
-- **Notes Summarizer**: Generate AI-powered summaries of video content
-- **Transcript Analysis**: Extract and process video transcripts
 
 ## Project Structure
 
@@ -55,14 +41,6 @@ JumpTube/
 └── README.md            # This file
 ```
 
-## API Configuration
-
-The application uses the YouTube Data API v3. Make sure to:
-
-1. Create a Google Cloud project
-2. Enable the YouTube Data API v3
-3. Create credentials (API key)
-4. Update `Backend/config.py` with your API key
 
 ## Core Feature: Jump to Video Parts
 
@@ -106,16 +84,6 @@ The application includes an AI-powered notes summarizer that can:
 3. The system extracts the video transcript
 4. AI processes the content to generate structured notes
 5. View or export the summarized content
-
-
-## Troubleshooting
-
-- **Import errors**: Make sure all dependencies are installed with `pip install -r requirements.txt`
-- **API errors**: Verify your API key is correct and the YouTube Data API v3 is enabled
-- **Jump navigation errors**: Ensure the video has available transcripts and OpenAI API is configured
-- **Voice recognition issues**: Check microphone permissions and audio input quality
-- **Summarization errors**: Check your OpenAI API key and internet connection for AI features
-- **Transcript issues**: Some videos may not have available transcripts
 
 ## License
 
