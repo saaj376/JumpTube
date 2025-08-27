@@ -28,7 +28,7 @@ class YouTubeClient:
 
 
 if __name__ == "__main__":
-    API_KEY = "AIzaSyATe_GoyUX4mwleJ700ICnQbvq78Ba9JF4"
+    API_KEY = ""
     yt_client = YouTubeClient(API_KEY)
 
     query = "convolutional neural networks tutorial"
