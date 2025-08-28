@@ -1,5 +1,5 @@
 from youtube import YoutubeClient
-from config import YOUTUBE_API_KEY
+from config import YOUTUBE_API_KEY, GEMINI_API_KEY
 
 if __name__=="__main__":
     ytclient=YoutubeClient(YOUTUBE_API_KEY)
