@@ -1,91 +1,21 @@
-# JumpTube - YouTube Video Search & Notes Summarizer
+## Whatever I've implemented so far:
 
-A Python application that allows you to search for YouTube videos using the YouTube Data API v3, generate AI-powered summaries of video content, and **jump to specific parts of videos based on natural language prompts**. Available in command-line version.
+So I've designed a local system which has the following core features:
+- uses the youtube api key to fetch videos and display in the UI
+- the user can click on the video and play the video
+- when the user begins the video, a data processing pipeline transcribes the video even before the audio playback is complete using OpenAI's faster-whisper
+- a prompt bar is placed below the video. Let's say the prompt is "navigate to part where CNN is first explained" or "navigate to 5:22 of the video" or a similar prompt like that, it will navigate automatically to that part of the video
 
-## Features
+Normally to transcribe a youtube video, we have to download the video and then use an external tool to extract the text from the audio of the video file. Or else there is the youtube transcript API which extracts the youtube video transcripts from the video but this only works when the video when uploaded by the user to his/her channel has transcriptions filled in by the user manually, else it won't work. 
 
-- Search YouTube videos by keywords
-- Asynchronous processing using celery without disrupting or blocking the UI
-- Redis is used to store the cache temporarily and then next time, it gives instant reply
-- **Jump to specific video parts using natural language prompts**
-- **Voice/audio prompt support** for hands-free navigation
-- AI-powered video content summarization and downloading it as PDF
-  
-## Installation
+But I have created a data processing pipeline which transcribes the youtube video based on the url in two major steps:
+- Fetching the audio stream using with yt-dlp
+   - The first stage of the pipeline is to obtain a direct, streamable link to the audio of the YouTube video. We use yt-dlp for this task because it is highly efficient and avoids downloading the entire video file.
+   - The core idea behind yt-dlp is to stream the audio into ffmpeg without downloading the youtube video and occupying additional space
+- Converting the audio using ffmpeg
+   - The audio stream obtained from yt-dlp is in a compressed format (like Opus or AAC). The Whisper model, however, requires the audio in a very specific, raw, uncompressed format. This is where ffmpeg, the universal multimedia converter, comes in.
+   - The raw audio bytes from ffmpeg are then converted into a NumPy array of 32-bit floating-point numbers, normalized to a range of -1.0 to 1.0.
+   - A perfectly formatted NumPy array, ready to be fed into the Whisper model for transcription.
 
-1. **Clone or download this repository**
-2. Install FFMPEG and Redis
-3. **Install required dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Configure your YouTube API key:**
-   - Get a YouTube Data API v3 key from [Google Cloud Console](https://console.cloud.google.com/)
-   - Edit `Backend/config.py` and replace `YOUR_YOUTUBE_API_KEY_HERE` with your actual API key
-   - Enable the YouTube Data API v3 in your Google Cloud project
-   - also make sure google cloud speech to text API is working fine
-
-
-## Project Structure
-
-```
-JumpTube/
-├── Backend/
-│   ├── config.py          # API configuration
-│   ├── youtube.py         # YouTube API client
-│   ├── main.py           # Command-line interface
-│   ├── summarizer.py      # AI-powered content summarization
-│   └── transcription.py   # Video transcript extraction
-├── requirements.txt      # Python dependencies
-└── README.md            # This file
-```
-
-
-## Core Feature: Jump to Video Parts
-
-JumpTube's main feature allows you to navigate to specific parts of any YouTube video using natural language prompts. Simply describe what you're looking for, and the AI will find the exact timestamp and jump to that part of the video.
-
-### Examples of Prompts
-
-- **"Navigate to part where CNN is first explained"**
-- **"Jump to the section about machine learning algorithms"**
-- **"Go to where they discuss the main findings"**
-- **"Find the part about troubleshooting steps"**
-- **"Seek to the conclusion of the presentation"**
-
-### How It Works
-
-1. **Input Prompt**: Provide a text or voice prompt describing what you want to find
-2. **AI Analysis**: The system analyzes the video transcript and content
-3. **Timestamp Detection**: AI identifies the exact location in the video
-4. **Video Navigation**: Automatically seeks to that timestamp and resumes playback
-5. **Context Display**: Shows relevant context around the found section
-
-### Input Methods
-
-- **Text Prompts**: Type your request in natural language
-- **Voice Commands**: Speak your request for hands-free operation
-- **Audio Input**: Upload or record audio prompts
-
-## Notes Summarizer
-
-The application includes an AI-powered notes summarizer that can:
-
-- **Extract Transcripts**: Automatically retrieve video transcripts from YouTube
-- **Generate Summaries**: Create concise, structured notes from video content
-- **Smart Analysis**: Identify key points, topics, and important information
-- **Export Options**: Save summaries in various formats for study or reference
-
-### How It Works
-
-1. Search for a YouTube video using the search functionality
-2. Select a video to analyze
-3. The system extracts the video transcript
-4. AI processes the content to generate structured notes
-5. View or export the summarized content
-
-## License
-
-This project is open source and available under the Apache License
-
+The transcription is then used to seek to different parts of the video based on the prompt given by the user. 
+Another feature which is being implemented is the youtube video notes summarizer which uses Gemini API to summarize the given youtube video url based on the transcription provided earlier and then download it as a notes in the form of a PDF.
