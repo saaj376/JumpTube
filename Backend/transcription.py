@@ -3,7 +3,7 @@ from faster_whisper import WhisperModel
 import numpy as np
 import time
 
-class YoutubeTransciber:
+class YoutubeTranscriber:
     def __init__(self, model_size="tiny.en"):
         print("Loading model: ",model_size)
         self.model=WhisperModel(model_size,device="cpu",compute_type="int8")
@@ -48,15 +48,9 @@ class YoutubeTransciber:
             totaltime=endtime-starttime
             print("Transcription finished in ",totaltime,"seconds")
 
-            print(fulltranscript)
             return fulltranscript
         except FileNotFoundError as e:
             print("Please make sure yt-dlp and ffmpeg are installed in your path")
         except Exception as e:
             print("Some error ma, kindly debug")
 
-if __name__=="__main__":
-    VIDEO_URL = "https://www.youtube.com/watch?v=UEU4SzBjqrc"
-    
-    transcriber = YoutubeTransciber(model_size="tiny.en")
-    transcriber.transcribe(VIDEO_URL)
